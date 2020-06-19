@@ -20,21 +20,57 @@
 
     -->
     <!-- 3，组件自定义事件、自定义组件的v-model、.sync修饰符
-        这里主要讲述给组件绑定事件等内容。
-        
+      这里主要讲述给组件绑定事件等内容。
+      实现1：实现给组件自定义事件、绑定原生事件
+      实现2：自定义组件v-model
+      实现3：.sync修饰符。:visiable.sync = 变量 子组件可以修改父组件某一变量的简写方式。
+
     -->
     <!-- 4，插槽（作用域插槽和具名插槽）-->
-    <!-- 5，动态组件-->
-    <!-- 6，异步组件-->
-    <!-- 7，封装的可复用的组件注意事项 -->
-    <!-- 8，描述组件的初次渲染、更新渲染、异步渲染过程 -->
+    <!-- 5，动态组件 
+          <component :is="currentComponent"></component>
+          currentComponent是当前组件。
+          使用场景：比如根据不同用户角色，展示不同权限。
+    -->
+    <!-- 6，异步组件
+          异步引入组件方式：通过（）=> import(组件路径方式) 返回promise.resolve(组件实例)
+          在需要引入一个
+    -->
+    <!-- 7，封装的可复用的组件注意事项 
+        封装可复用组件不知道写啥，先空着。
+    -->
+    <!-- 8，模板编译
+         重点：生成render函数(用来生成虚拟DOM）
+
+     -->
+    <!-- 9，虚拟DOM与diff算法 
+        重点：虚拟dom是啥，如何表示、diff算法过程
+    -->
+    <!-- 10，描述组件的初次渲染、更新渲染（渲染过程是异步的）过程(更新渲染涉及响应式)。
+        重点：更新渲染执行流程  
+    -->
+    <!-- 11，响应式原理 
+        重点：Object.defineProperty的使用、缺点、vue3如何解决
+    -->
+
+    <!-- 12，vue3相关 -->
     123
+
+    <!-- 以上便涉及了vue渲染的整个流程，重点是8-12 -->
     <A></A> 
     <B></B>
     <C></C>
     <eventBusFrom></eventBusFrom>
     <eventBusTo></eventBusTo>
     <attrs :from="from" :desc="desc" :extra="extra"></attrs>
+    
+    <div>{{ value }}</div>
+    <!-- <my-model :value="value" @input="change"></my-model> -->
+    <!-- 此种写法等同于下面写法 -->
+    <my-model v-model="value"></my-model>
+    
+    <!-- 动态组件 -->
+    <component :is="currentComponent"></component>
   </div>
 </template>
 
@@ -42,22 +78,35 @@
 import requireModules from './module'
 import eventBusTo from './eventBusTo'
 import eventBusFrom from './eventBusFrom'
+import myModel from './myModel'
 import attrs from './attrs'
 export default {
   components: {
     eventBusTo,
     eventBusFrom,
-    attrs
+    attrs,
+    myModel
+  },
+  provide: {
+    testProvide: '我是来自父组件的哦'
   },
   data() {
     return {
       from: "我是来自父组件",
       desc: "我是描述",
       extra: "我是其他信息",
+      value: '',
+      currentComponent: eventBusTo,
+      
     }
   },
   created() {
     requireModules()
+  },
+  methods: {
+    change(val) {
+      this.value = val
+    }
   }
 }
 </script>
